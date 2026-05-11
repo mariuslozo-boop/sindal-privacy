@@ -10,7 +10,6 @@
     --muted: #5b5550;
     --bg: #ffffff;
     --accent: #9e0507;
-    --code-bg: #f4f1e8;
     --border: #e3ddd2;
   }
   * { box-sizing: border-box; }
@@ -42,12 +41,6 @@
     margin: 0 0 24px;
   }
   p, li { margin: 8px 0; }
-  code {
-    background: var(--code-bg);
-    padding: 1px 5px;
-    border-radius: 3px;
-    font: 13px/1 Consolas, "SF Mono", Menlo, monospace;
-  }
   ul { padding-left: 22px; }
   a { color: var(--accent); }
   strong { color: var(--fg); }
@@ -71,8 +64,8 @@
 <p>
   The extension assists with one workflow: moving a vehicle identifier (VIN)
   and an original-equipment part number (OE) between three trade websites
-  (<code>au2web.dk</code>, <code>partslink24.com</code>,
-  <code>appmain.nemdele.dk</code>) and, optionally, the user's own local stock
+  (au2web.dk, partslink24.com,
+  appmain.nemdele.dk) and, optionally, the user's own local stock
   file via a native-messaging helper. It is <strong>not</strong> intended for
   the general public.
 </p>
@@ -91,7 +84,7 @@
       lookup together,</li>
   <li>a display-name string the user can pick from a dropdown in the popup
       (e.g. a first name); if the user has not picked one, the literal value
-      <code>"unknown"</code> is sent in its place,</li>
+      "unknown" is sent in its place,</li>
   <li>the local timestamp.</li>
 </ul>
 <p>
@@ -106,7 +99,7 @@
 
 <h3>2. Local-only data</h3>
 <p>
-  The extension stores the following in <code>chrome.storage</code> on the
+  The extension stores the following in chrome.storage on the
   user's own computer. This data never leaves the device:
 </p>
 <ul>
@@ -118,8 +111,8 @@
 
 <h3>3. Native-messaging host (local helper)</h3>
 <p>
-  The companion helper <code>dk.sindal.helper</code> runs on the user's
-  machine and reads a local Excel stock file (<code>stock.xlsx</code>) and PDF
+  The companion helper dk.sindal.helper runs on the user's
+  machine and reads a local Excel stock file (stock.xlsx) and PDF
   reports the user selects. All data read by the helper stays on the local
   machine; nothing is uploaded.
 </p>
@@ -153,16 +146,16 @@
 
 <h2>Permissions and why we need them</h2>
 <ul>
-  <li><code>storage</code> — saves the local preferences listed above.</li>
-  <li><code>tabGroups</code> — coordinates the workflow tabs in a single
+  <li>storage — saves the local preferences listed above.</li>
+  <li>tabGroups — coordinates the workflow tabs in a single
       Chrome group.</li>
-  <li><code>nativeMessaging</code> — communicates with the local helper
+  <li>nativeMessaging — communicates with the local helper
       described above.</li>
-  <li>Host permission on <code>*.partslink24.com</code>,
-      <code>webkat.au2web.dk</code>, <code>appmain.nemdele.dk</code> —
+  <li>Host permission on *.partslink24.com,
+      webkat.au2web.dk, appmain.nemdele.dk —
       required to inject the workflow content scripts.</li>
-  <li>Host permission on <code>script.google.com</code> and
-      <code>script.googleusercontent.com</code> — required for the telemetry
+  <li>Host permission on script.google.com and
+      script.googleusercontent.com — required for the telemetry
       endpoint.</li>
 </ul>
 
