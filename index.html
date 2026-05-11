@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sindal Chrome Extension — Privacy Policy</title>
+<style>
+  :root {
+    --fg: #1f1d1a;
+    --muted: #5b5550;
+    --bg: #ffffff;
+    --accent: #9e0507;
+    --code-bg: #f4f1e8;
+    --border: #e3ddd2;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--fg); }
+  body {
+    font: 16px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 48px 24px 96px;
+  }
+  h1 {
+    font-size: 28px;
+    margin: 0 0 6px;
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 12px;
+  }
+  h2 {
+    font-size: 20px;
+    margin: 36px 0 8px;
+  }
+  h3 {
+    font-size: 16px;
+    margin: 20px 0 4px;
+  }
+  .updated {
+    color: var(--muted);
+    font-size: 14px;
+    margin: 0 0 24px;
+  }
+  p, li { margin: 8px 0; }
+  code {
+    background: var(--code-bg);
+    padding: 1px 5px;
+    border-radius: 3px;
+    font: 13px/1 Consolas, "SF Mono", Menlo, monospace;
+  }
+  ul { padding-left: 22px; }
+  a { color: var(--accent); }
+  strong { color: var(--fg); }
+  hr { border: 0; border-top: 1px solid var(--border); margin: 32px 0; }
+</style>
+</head>
+<body>
+
+<h1>Sindal Chrome Extension — Privacy Policy</h1>
+<p class="updated">Last updated: 2026-05-11</p>
+
+<h2>Who we are</h2>
+<p>
+  The Sindal Chrome extension is an internal tool for staff of Sindal Autoophug
+  (a Danish auto-recycler). It coordinates a parts-lookup workflow across three
+  third-party websites the staff already use, plus a local stock-file helper.
+</p>
+<p><strong>Contact:</strong> mariuslozovskis@gmail.com</p>
+
+<h2>What the extension does</h2>
+<p>
+  The extension assists with one workflow: moving a vehicle identifier (VIN)
+  and an original-equipment part number (OE) between three trade websites
+  (<code>au2web.dk</code>, <code>partslink24.com</code>,
+  <code>appmain.nemdele.dk</code>) and, optionally, the user's own local stock
+  file via a native-messaging helper. It is <strong>not</strong> intended for
+  the general public.
+</p>
+
+<h2>Data we collect</h2>
+
+<h3>1. Workflow telemetry</h3>
+<p>
+  When a user reaches one of three workflow steps, the extension sends a
+  single event to a Google Apps Script endpoint owned by the extension author.
+  Each event contains only:
+</p>
+<ul>
+  <li>the workflow step name (<code>au2web_capture</code>,
+      <code>partslink24_vin_fill</code>, or <code>nemdele_send</code>),</li>
+  <li>a short random flow-correlation id used to group the steps of one
+      lookup together,</li>
+  <li>a display-name string the user can pick from a dropdown in the popup
+      (e.g. a first name); if the user has not picked one, the literal value
+      <code>"unknown"</code> is sent in its place,</li>
+  <li>the local timestamp.</li>
+</ul>
+<p>
+  <strong>No</strong> VIN, OE number, vehicle data, page content, IP address,
+  browsing history, or other identifier is sent. Telemetry is always active
+  while the extension is installed; it cannot currently be turned off from
+  inside the extension. The endpoint receives the request from the user's
+  browser, which means the receiving Google service necessarily sees the
+  user's network-level IP address; the extension itself does not collect or
+  store it.
+</p>
+
+<h3>2. Local-only data</h3>
+<p>
+  The extension stores the following in <code>chrome.storage</code> on the
+  user's own computer. This data never leaves the device:
+</p>
+<ul>
+  <li>the selected display-name identity,</li>
+  <li>the last opened popup pane,</li>
+  <li>the last selected stock-report filename,</li>
+  <li>a transient brand-pick state used by the Partslink24 content script.</li>
+</ul>
+
+<h3>3. Native-messaging host (local helper)</h3>
+<p>
+  The companion helper <code>dk.sindal.helper</code> runs on the user's
+  machine and reads a local Excel stock file (<code>stock.xlsx</code>) and PDF
+  reports the user selects. All data read by the helper stays on the local
+  machine; nothing is uploaded.
+</p>
+
+<h2>How data is used</h2>
+<p>
+  Telemetry is used solely to measure whether the workflow is being completed
+  end-to-end. It is <strong>not</strong> sold, shared with third parties,
+  used for advertising, used for profiling, or used to determine
+  creditworthiness or lending eligibility.
+</p>
+
+<h2>Where data is stored</h2>
+<p>
+  Telemetry events are written to a Google Sheet owned by the extension
+  author and accessed only by Sindal staff for internal review. Events are
+  retained indefinitely and can be deleted on request to the contact email
+  above.
+</p>
+
+<h2>What we do NOT collect</h2>
+<ul>
+  <li>Personal identifiers beyond the user-chosen display name</li>
+  <li>VINs, license plates, OE numbers, or any parts data</li>
+  <li>Page content from au2web, Partslink24, or NemDele</li>
+  <li>Authentication credentials or session cookies</li>
+  <li>Geolocation</li>
+  <li>Browsing history outside the three host-permission domains</li>
+  <li>Health or financial information</li>
+</ul>
+
+<h2>Permissions and why we need them</h2>
+<ul>
+  <li><code>storage</code> — saves the local preferences listed above.</li>
+  <li><code>tabGroups</code> — coordinates the workflow tabs in a single
+      Chrome group.</li>
+  <li><code>nativeMessaging</code> — communicates with the local helper
+      described above.</li>
+  <li>Host permission on <code>*.partslink24.com</code>,
+      <code>webkat.au2web.dk</code>, <code>appmain.nemdele.dk</code> —
+      required to inject the workflow content scripts.</li>
+  <li>Host permission on <code>script.google.com</code> and
+      <code>script.googleusercontent.com</code> — required for the telemetry
+      endpoint.</li>
+</ul>
+
+<h2>Changes to this policy</h2>
+<p>
+  Material changes will be reflected by updating the "Last updated" date at
+  the top of this page.
+</p>
+
+<h2>Contact / removal requests</h2>
+<p>
+  Email <strong>mariuslozovskis@gmail.com</strong> to request deletion of any
+  telemetry events tied to your display name.
+</p>
+
+</body>
+</html>
