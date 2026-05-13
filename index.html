@@ -74,19 +74,20 @@
 
 <h3>1. Workflow telemetry</h3>
 <p>
-  When a user reaches a workflow step, the extension sends a single event
-  to a Google Apps Script endpoint owned by the extension author. Each
-  event contains only:
+  When the extension completes a workflow step or performs a Partslink24
+  keep-alive reload, it sends a single event to a Google Apps Script
+  endpoint owned by the extension author. Each event contains only:
 </p>
 <ul>
-  <li>the workflow step name, one of: au2web_capture,
-      partslink24_vin_fill, nemdele_send, or
-      partslink24_keepalive_reload,</li>
+  <li>the step name, one of: au2web_capture, partslink24_vin_fill,
+      nemdele_send (each triggered by a user action), or
+      partslink24_keepalive_reload (triggered internally by the service
+      worker when the user has been away from Partslink24 for 5 minutes),</li>
   <li>a short random flow-correlation id used to group the steps of one
       lookup together,</li>
-  <li>a display-name string the user can pick from a dropdown in the popup
-      (e.g. a first name); if the user has not picked one, the literal value
-      "unknown" is sent in its place,</li>
+  <li>a tester identity the user can pick from a dropdown in the popup
+      (a fixed list of "bruger-1" through "bruger-10"); if the user has
+      not picked one, the literal value "unknown" is sent in its place,</li>
   <li>the local timestamp.</li>
 </ul>
 <p>
@@ -105,12 +106,14 @@
   user's own computer. This data never leaves the device:
 </p>
 <ul>
-  <li>the selected display-name identity,</li>
+  <li>the selected tester identity,</li>
   <li>the last opened popup pane (main, Lager, or Indstillinger),</li>
   <li>the last selected match-report filename,</li>
   <li>the current vehicle context (VIN, plate, last OE number), cleared
       automatically on each Chrome restart,</li>
-  <li>the keep-alive and auto-switch toggle states,</li>
+  <li>the keep-alive, auto-switch, and debug-mode toggle states,</li>
+  <li>the last keep-alive outcome (a short status string and timestamp,
+      shown to the user only when Debug-tilstand is enabled),</li>
   <li>a transient brand-pick state used by the Partslink24 content script,</li>
   <li>activity timestamps used by the Partslink24 keep-alive (cleared on
       browser restart).</li>
@@ -158,12 +161,14 @@
 <h2>Permissions and why we need them</h2>
 <ul>
   <li><strong>storage</strong>, saves the local preferences listed above
-      and the Lager pane's IndexedDB stock cache.</li>
+      via chrome.storage.local and chrome.storage.session. The Lager
+      pane's stock cache uses IndexedDB, which is available to
+      extensions without an additional permission.</li>
   <li><strong>tabGroups</strong>, coordinates the workflow tabs in a single
       Chrome group named "Sindal".</li>
-  <li><strong>alarms</strong>, schedules a one-shot 5-minute keep-alive
-      reload of the user's Partslink24 tab when the user has focused away
-      from Partslink24, so the session does not expire while the user is
+  <li><strong>alarms</strong>, schedules a one-shot reload of the user's
+      Partslink24 tab 5 minutes after the user focuses away from
+      Partslink24, so the session does not expire while the user is
       working elsewhere. The alarm is cancelled the moment the user
       focuses Partslink24 again.</li>
   <li>Host permission on <strong>*.partslink24.com</strong>,
