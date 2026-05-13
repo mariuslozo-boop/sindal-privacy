@@ -50,13 +50,14 @@
 <body>
 
 <h1>Sindal Chrome Extension, Privacy Policy</h1>
-<p class="updated">Last updated: 2026-05-11</p>
+<p class="updated">Last updated: 2026-05-13</p>
 
 <h2>Who we are</h2>
 <p>
   The Sindal Chrome extension is an internal tool for staff of Sindal Autoophug
   (a Danish auto-recycler). It coordinates a parts-lookup workflow across three
-  third-party websites the staff already use, plus a local stock-file helper.
+  third-party websites the staff already use, plus an optional browser-based
+  Lager (stock) lookup pane.
 </p>
 <p><strong>Contact:</strong> mariuslozovskis@gmail.com</p>
 
@@ -64,22 +65,23 @@
 <p>
   The extension assists with one workflow: moving a vehicle identifier (VIN)
   and an original-equipment part number (OE) between three trade websites
-  (au2web.dk, partslink24.com,
-  appmain.nemdele.dk) and, optionally, the user's own local stock
-  file via a native-messaging helper. It is <strong>not</strong> intended for
-  the general public.
+  (au2web.dk, partslink24.com, appmain.nemdele.dk) and, optionally, the
+  user's own stock spreadsheet via a browser-native Lager pane. It is
+  <strong>not</strong> intended for the general public.
 </p>
 
 <h2>Data we collect</h2>
 
 <h3>1. Workflow telemetry</h3>
 <p>
-  When a user reaches one of three workflow steps, the extension sends a
-  single event to a Google Apps Script endpoint owned by the extension author.
-  Each event contains only:
+  When a user reaches a workflow step, the extension sends a single event
+  to a Google Apps Script endpoint owned by the extension author. Each
+  event contains only:
 </p>
 <ul>
-  <li>the workflow step name (au2web_capture, partslink24_vin_fill, or nemdele_send),</li>
+  <li>the workflow step name, one of: au2web_capture,
+      partslink24_vin_fill, nemdele_send, or
+      partslink24_keepalive_reload,</li>
   <li>a short random flow-correlation id used to group the steps of one
       lookup together,</li>
   <li>a display-name string the user can pick from a dropdown in the popup
@@ -104,17 +106,25 @@
 </p>
 <ul>
   <li>the selected display-name identity,</li>
-  <li>the last opened popup pane,</li>
-  <li>the last selected stock-report filename,</li>
-  <li>a transient brand-pick state used by the Partslink24 content script.</li>
+  <li>the last opened popup pane (main, Lager, or Indstillinger),</li>
+  <li>the last selected match-report filename,</li>
+  <li>the current vehicle context (VIN, plate, last OE number), cleared
+      automatically on each Chrome restart,</li>
+  <li>the keep-alive and auto-switch toggle states,</li>
+  <li>a transient brand-pick state used by the Partslink24 content script,</li>
+  <li>activity timestamps used by the Partslink24 keep-alive (cleared on
+      browser restart).</li>
 </ul>
 
-<h3>3. Native-messaging host (local helper)</h3>
+<h3>3. Lager pane (browser-native stock lookup)</h3>
 <p>
-  The companion helper dk.sindal.helper runs on the user's
-  machine and reads a local Excel stock file (stock.xlsx) and PDF
-  reports the user selects. All data read by the helper stays on the local
-  machine; nothing is uploaded.
+  The Lager pane lets the user select a local stock spreadsheet
+  (stock.xlsx) and drag in parts-rapport PDFs to see which parts are in
+  stock. All parsing happens inside the browser using bundled SheetJS
+  and PDF.js libraries; parsed stock rows are cached in the browser's
+  IndexedDB so subsequent rapport checks are instant. <strong>Nothing
+  from the stock file or the rapport PDFs is uploaded</strong>, and no
+  separate native program is installed or launched.
 </p>
 
 <h2>How data is used</h2>
@@ -137,6 +147,7 @@
 <ul>
   <li>Personal identifiers beyond the user-chosen display name</li>
   <li>VINs, license plates, OE numbers, or any parts data</li>
+  <li>Stock spreadsheet contents or rapport PDF contents</li>
   <li>Page content from au2web, Partslink24, or NemDele</li>
   <li>Authentication credentials or session cookies</li>
   <li>Geolocation</li>
@@ -146,17 +157,21 @@
 
 <h2>Permissions and why we need them</h2>
 <ul>
-  <li>storage, saves the local preferences listed above.</li>
-  <li>tabGroups, coordinates the workflow tabs in a single
-      Chrome group.</li>
-  <li>nativeMessaging, communicates with the local helper
-      described above.</li>
-  <li>Host permission on *.partslink24.com,
-      webkat.au2web.dk, appmain.nemdele.dk,
+  <li><strong>storage</strong>, saves the local preferences listed above
+      and the Lager pane's IndexedDB stock cache.</li>
+  <li><strong>tabGroups</strong>, coordinates the workflow tabs in a single
+      Chrome group named "Sindal".</li>
+  <li><strong>alarms</strong>, schedules a one-shot 5-minute keep-alive
+      reload of the user's Partslink24 tab when the user has focused away
+      from Partslink24, so the session does not expire while the user is
+      working elsewhere. The alarm is cancelled the moment the user
+      focuses Partslink24 again.</li>
+  <li>Host permission on <strong>*.partslink24.com</strong>,
+      <strong>webkat.au2web.dk</strong>, <strong>appmain.nemdele.dk</strong>,
       required to inject the workflow content scripts.</li>
-  <li>Host permission on script.google.com and
-      script.googleusercontent.com, required for the telemetry
-      endpoint.</li>
+  <li>Host permission on <strong>script.google.com</strong> and
+      <strong>script.googleusercontent.com</strong>, required for the
+      telemetry endpoint.</li>
 </ul>
 
 <h2>Changes to this policy</h2>
